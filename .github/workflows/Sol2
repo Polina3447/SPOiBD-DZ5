@@ -1,0 +1,34 @@
+style = ttk.Style()
+# Настройка стиля для приложения с едой 
+style = ttk.Style()
+
+style.configure("TFrame", background="#F8E0E6")  # Бледно-розовый
+style.configure("TLabel", background="#F8E0E6", foreground="#333333")
+style.configure("TEntry", background="#FFF", foreground="#333333", borderwidth=2, relief="solid")
+style.configure("TButton", background="#C8A2C8", foreground="#FFF", font=("Arial", 12))
+
+
+def add_food():
+  food_name = food_entry.get()
+  food_list.insert(tk.END, food_name)
+  food_entry.delete(0, tk.END)
+
+food_window = tk.Tk()
+food_window.title("Еда")
+
+food_label = tk.Label(food_window, text="Введите название еды:")
+food_label.pack(pady=10)
+
+food_entry = tk.Entry(food_window)
+food_entry.pack()
+
+add_button = tk.Button(food_window, text="Добавить", command=add_food)
+add_button.pack(pady=10)
+
+food_list = tk.Listbox(food_window)
+food_list.pack()
+
+food_window.mainloop()
+
+
+food_window.mainloop()
