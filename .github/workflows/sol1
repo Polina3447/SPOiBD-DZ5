@@ -1,21 +1,36 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk
 
 def login():
   username = username_entry.get()
   password = password_entry.get()
 
-  if username == "user" and password == "pass": 
+  if username == "12345" and password == "12345":
     login_window.destroy()
     profile_window = tk.Tk()
     profile_window.title("Личный профиль")
 
-    profile_label = tk.Label(profile_window, text=f"Добро пожаловать, {username}!")
+    # Добавьте здесь код для отображения фотографии и другой информации
+    profile_label = tk.Label(profile_window, text=f"Приветствую в приложении!")
     profile_label.pack()
 
     profile_window.mainloop()
   else:
     messagebox.showerror("Ошибка", "Неверный логин или пароль")
+
+login_window = tk.Tk()
+login_window.title("Авторизация")
+
+# Настройка стиля для приложения
+style = ttk.Style()
+
+# фон
+style.configure("TFrame", background="#F8E0E6")  # Бледно-розовый
+style.configure("TLabel", background="#F8E0E6", foreground="#333333")  # Темно-серый текст
+style.configure("TEntry", background="#FFF", foreground="#333333", borderwidth=2, relief="solid")  # Белый фон с границей
+
+# кнопка
+style.configure("TButton", background="#C8A2C8", foreground="#FFF", font=("Arial", 12))  # Сиреневый фон, белый текст
 
 login_window = tk.Tk()
 login_window.title("Авторизация")
@@ -34,5 +49,6 @@ password_entry.grid(row=1, column=1, padx=5, pady=5)
 
 login_button = tk.Button(login_window, text="Войти", command=login)
 login_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
 
 login_window.mainloop()
