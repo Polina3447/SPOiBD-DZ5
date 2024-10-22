@@ -10,69 +10,69 @@ from PyQt6.QtCore import Qt
 class ProfileScreen(QWidget):
     def __init__(self, username):
         super().__init__()
-        self.setWindowTitle("Р›РёС‡РЅС‹Р№ РїСЂРѕС„РёР»СЊ")
+        self.setWindowTitle("Личный профиль")
         self.setGeometry(100, 100, 300, 300)
 
         self.layout = QVBoxLayout()
 
-        self.welcome_label = QLabel(f"Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ, {username}!")
+        self.welcome_label = QLabel(f"Добро пожаловать, {username}!")
         self.layout.addWidget(self.welcome_label)
 
-        self.photo_label = QLabel("Р¤РѕС‚РѕРіСЂР°С„РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ:")
+        self.photo_label = QLabel("Фотография пользователя:")
         self.layout.addWidget(self.photo_label)
 
         self.photo_display = QLabel(self)
-        self.photo_display.setFixedSize(100, 100)  # РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹Р№ СЂР°Р·РјРµСЂ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ С„РѕС‚Рѕ
-        self.photo_display.setStyleSheet("border: 1px solid black;")  # Р”РѕР±Р°РІР»СЏРµРј СЂР°РјРєСѓ РґР»СЏ QLabel
-        self.photo_display.setAcceptDrops(True)  # Р Р°Р·СЂРµС€Р°РµРј РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёРµ
+        self.photo_display.setFixedSize(100, 100)  # Устанавливаем фиксированный размер для отображения фото
+        self.photo_display.setStyleSheet("border: 1px solid black;")  # Добавляем рамку для QLabel
+        self.photo_display.setAcceptDrops(True)  # Разрешаем перетаскивание
         self.layout.addWidget(self.photo_display)
 
-        self.upload_button = QPushButton("Р—Р°РіСЂСѓР·РёС‚СЊ С„РѕС‚РѕРіСЂР°С„РёСЋ", self)
+        self.upload_button = QPushButton("Загрузить фотографию", self)
         self.upload_button.clicked.connect(self.upload_photo)
         self.layout.addWidget(self.upload_button)
 
-        self.logout_button = QPushButton("Р’С‹Р№С‚Рё", self)
+        self.logout_button = QPushButton("Выйти", self)
         self.logout_button.clicked.connect(self.logout)
         self.layout.addWidget(self.logout_button)
 
         self.setLayout(self.layout)
 
-            # РЈСЃС‚Р°РЅРѕРІРєР° СЃС‚РёР»РµР№
+            # Установка стилей
         self.setStyleSheet("""
             QWidget {
-                background-color: #ADD8E6;  /* РЎРІРµС‚Р»Рѕ-РіРѕР»СѓР±РѕР№ С„РѕРЅ */
+                background-color: #ADD8E6;  /* Светло-голубой фон */
             }
             QPushButton {
-                background-color: #00BFFF;  /* Р“РѕР»СѓР±РѕР№ С†РІРµС‚ РєРЅРѕРїРѕРє */
-                color: white;  /* Р¦РІРµС‚ С‚РµРєСЃС‚Р° РєРЅРѕРїРѕРє */
-                border: none;  /* РЈР±РёСЂР°РµРј СЂР°РјРєСѓ */
-                padding: 10px;  /* РћС‚СЃС‚СѓРїС‹ */
-                border-radius: 5px;  /* Р—Р°РєСЂСѓРіР»РµРЅРЅС‹Рµ СѓРіР»С‹ */
+                background-color: #00BFFF;  /* Голубой цвет кнопок */
+                color: white;  /* Цвет текста кнопок */
+                border: none;  /* Убираем рамку */
+                padding: 10px;  /* Отступы */
+                border-radius: 5px;  /* Закругленные углы */
             }
             QPushButton:hover {
-                background-color: #1E90FF;  /* Р¦РІРµС‚ РєРЅРѕРїРєРё РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+                background-color: #1E90FF;  /* Цвет кнопки при наведении */
             }
         """)
 
     def set_default_photo(self):
-        # Р—Р°РіСЂСѓР¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
-        pixmap = QPixmap("Users\РџРѕР»РёРЅР°\Pictures\admin_photo.png")
+        # Загружаем изображение по умолчанию
+        pixmap = QPixmap("Users\Полина\Pictures\admin_photo.png")
         self.photo_label.setPixmap(pixmap)
         self.photo_label.setScaledContents(True)
-        # РњР°СЃС€С‚Р°Р±РёСЂСѓРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ, С‡С‚РѕР±С‹ РѕРЅРѕ РІРїРёСЃС‹РІР°Р»РѕСЃСЊ РІ QLabel
+        # Масштабируем изображение, чтобы оно вписывалось в QLabel
         self.photo_label.setFixedSize(100, 100)
-        # РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹Р№ СЂР°Р·РјРµСЂ РґР»СЏ QLabel
+        # Устанавливаем фиксированный размер для QLabel
 
     def upload_photo(self):
-        # РћС‚РєСЂС‹РІР°РµРј РґРёР°Р»РѕРі РІС‹Р±РѕСЂР° С„Р°Р№Р»Р° options = QFileDialog.Option()
-        file_name, _ = QFileDialog.getOpenFileName(self, "Р’С‹Р±РµСЂРёС‚Рµ С„РѕС‚РѕРіСЂР°С„РёСЋ", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)", options=options)
+        # Открываем диалог выбора файла options = QFileDialog.Option()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Выберите фотографию", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)", options=options)
         if file_name:
             self.set_photo(file_name)
 
     def set_photo(self, file_name):
-        pixmap = QPixmap(file_name)  # Р—Р°РіСЂСѓР¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
-        pixmap = pixmap.scaled(self.photo_display.size(), aspectRatioMode=True)  # РњР°СЃС€С‚Р°Р±РёСЂСѓРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
-        self.photo_display.setPixmap(pixmap)  # РћС‚РѕР±СЂР°Р¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РІ QLabel
+        pixmap = QPixmap(file_name)  # Загружаем изображение
+        pixmap = pixmap.scaled(self.photo_display.size(), aspectRatioMode=True)  # Масштабируем изображение
+        self.photo_display.setPixmap(pixmap)  # Отображаем изображение в QLabel
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasImage():
@@ -80,7 +80,7 @@ class ProfileScreen(QWidget):
 
     def dropEvent(self, event: QDropEvent):
         if event.mimeData().hasImage():
-            # РџРѕР»СѓС‡Р°РµРј РїСѓС‚СЊ Рє РёР·РѕР±СЂР°Р¶РµРЅРёСЋ
+            # Получаем путь к изображению
             file_name = event.mimeData().urls()[0].toLocalFile()
             self.set_photo(file_name)
 
@@ -94,22 +94,22 @@ class ProfileScreen(QWidget):
 class RegistrationScreen(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Р РµРіРёСЃС‚СЂР°С†РёСЏ")
+        self.setWindowTitle("Регистрация")
         self.setGeometry(100, 100, 300, 200)
 
         self.layout = QVBoxLayout()
 
         self.username_input = QLineEdit(self)
-        self.username_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ")
+        self.username_input.setPlaceholderText("Введите имя пользователя")
         self.password_input = QLineEdit(self)
-        self.password_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ")
+        self.password_input.setPlaceholderText("Введите пароль")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.confirm_password_input = QLineEdit(self)
-        self.confirm_password_input.setPlaceholderText("РџРѕРґС‚РІРµСЂРґРёС‚Рµ РїР°СЂРѕР»СЊ")
+        self.confirm_password_input.setPlaceholderText("Подтвердите пароль")
         self.confirm_password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
-        self.register_button = QPushButton("Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ", self)
+        self.register_button = QPushButton("Зарегистрироваться", self)
         self.register_button.clicked.connect(self.register)
 
         self.layout.addWidget(self.username_input)
@@ -119,20 +119,20 @@ class RegistrationScreen(QWidget):
 
         self.setLayout(self.layout)
 
-            # РЈСЃС‚Р°РЅРѕРІРєР° СЃС‚РёР»РµР№
+            # Установка стилей
         self.setStyleSheet("""
             QWidget {
-                background-color: #FFB6C1;  /* РЎРІРµС‚Р»Рѕ-СЂРѕР·РѕРІС‹Р№ С„РѕРЅ */
+                background-color: #FFB6C1;  /* Светло-розовый фон */
             }
             QPushButton {
-                background-color: #FF69B4;  /* РўРµРјРЅРѕ-СЂРѕР·РѕРІС‹Р№ С†РІРµС‚ РєРЅРѕРїРѕРє */
-                color: white;  /* Р¦РІРµС‚ С‚РµРєСЃС‚Р° РєРЅРѕРїРѕРє */
-                border: none;  /* РЈР±РёСЂР°РµРј СЂР°РјРєСѓ */
-                padding: 10px;  /* РћС‚СЃС‚СѓРїС‹ */
-                border-radius: 5px;  /* Р—Р°РєСЂСѓРіР»РµРЅРЅС‹Рµ СѓРіР»С‹ */
+                background-color: #FF69B4;  /* Темно-розовый цвет кнопок */
+                color: white;  /* Цвет текста кнопок */
+                border: none;  /* Убираем рамку */
+                padding: 10px;  /* Отступы */
+                border-radius: 5px;  /* Закругленные углы */
             }
             QPushButton:hover {
-                background-color: #FF1493;  /* Р¦РІРµС‚ РєРЅРѕРїРєРё РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+                background-color: #FF1493;  /* Цвет кнопки при наведении */
             }
         """)
 
@@ -142,11 +142,11 @@ class RegistrationScreen(QWidget):
         confirm_password = self.confirm_password_input.text()
 
         if password == confirm_password:
-            # Р’ СЂРµР°Р»СЊРЅРѕРј РїСЂРёР»РѕР¶РµРЅРёРё Р·РґРµСЃСЊ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р»РѕРіРёРєР° РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
-            QMessageBox.information(self, "РЈСЃРїРµС…", "Р’С‹ СѓСЃРїРµС€РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹!")
+            # В реальном приложении здесь должна быть логика для сохранения пользователя
+            QMessageBox.information(self, "Успех", "Вы успешно зарегистрированы!")
             self.open_profile(username)
         else:
-            QMessageBox.warning(self, "РћС€РёР±РєР°", "РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚.")
+            QMessageBox.warning(self, "Ошибка", "Пароли не совпадают.")
 
     def open_profile(self, username):
         self.profile_screen = ProfileScreen(username)
@@ -158,21 +158,21 @@ class RegistrationScreen(QWidget):
 class LoginScreen(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Р’С…РѕРґ")
+        self.setWindowTitle("Вход")
         self.setGeometry(100, 100, 300, 200)
 
         self.layout = QVBoxLayout()
 
         self.username_input = QLineEdit(self)
-        self.username_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ")
+        self.username_input.setPlaceholderText("Введите имя пользователя")
         self.password_input = QLineEdit(self)
-        self.password_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ")
+        self.password_input.setPlaceholderText("Введите пароль")
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
 
-        self.login_button = QPushButton("Р’РѕР№С‚Рё", self)
+        self.login_button = QPushButton("Войти", self)
         self.login_button.clicked.connect(self.login)
 
-        self.register_button = QPushButton("Р РµРіРёСЃС‚СЂР°С†РёСЏ", self)
+        self.register_button = QPushButton("Регистрация", self)
         self.register_button.clicked.connect(self.open_registration)
 
         self.layout.addWidget(self.username_input)
@@ -181,16 +181,33 @@ class LoginScreen(QWidget):
         self.layout.addWidget(self.register_button)
 
         self.setLayout(self.layout)
-
+        
+        # Установка стилей
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #E6E6FA;  /* Светло-сиреневый фон */
+            }
+            QPushButton {
+                background-color: #9370DB;  /* Темно-сиреневый цвет кнопок */
+                color: white;  /* Цвет текста кнопок */
+                border: none;  /* Убираем рамку */
+                padding: 10px;  /* Отступы */
+                border-radius: 5px;  /* Закругленные углы */
+            }
+            QPushButton:hover {
+                background-color: #8A2BE2;  /* Цвет кнопки при наведении */
+            }
+        """)
 
     def login(self):
         username = self.username_input.text()
         password = self.password_input.text()
 
+        # Проверка учетных данных
         if (username == "user" and password == "password") or (username == "administrator" and password == "pass"):
             self.open_profile(username)
         else:
-            QMessageBox.warning(self, "РћС€РёР±РєР°", "РќРµРІРµСЂРЅРѕРµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё РїР°СЂРѕР»СЊ.")
+            QMessageBox.warning(self, "Ошибка", "Неверное имя пользователя или пароль.")
 
     def open_profile(self, username):
         self.profile_screen = ProfileScreen(username)
@@ -207,3 +224,4 @@ if __name__ == "__main__":
     login_screen = LoginScreen()
     login_screen.show()
     sys.exit(app.exec())
+
