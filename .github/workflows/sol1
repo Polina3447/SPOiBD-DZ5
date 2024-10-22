@@ -1,54 +1,209 @@
-import tkinter as tk
-from tkinter import ttk
-
-def login():
-  username = username_entry.get()
-  password = password_entry.get()
-
-  if username == "12345" and password == "12345":
-    login_window.destroy()
-    profile_window = tk.Tk()
-    profile_window.title("Личный профиль")
-
-    # Добавьте здесь код для отображения фотографии и другой информации
-    profile_label = tk.Label(profile_window, text=f"Приветствую в приложении!")
-    profile_label.pack()
-
-    profile_window.mainloop()
-  else:
-    messagebox.showerror("Ошибка", "Неверный логин или пароль")
-
-login_window = tk.Tk()
-login_window.title("Авторизация")
-
-# Настройка стиля для приложения
-style = ttk.Style()
-
-# фон
-style.configure("TFrame", background="#F8E0E6")  # Бледно-розовый
-style.configure("TLabel", background="#F8E0E6", foreground="#333333")  # Темно-серый текст
-style.configure("TEntry", background="#FFF", foreground="#333333", borderwidth=2, relief="solid")  # Белый фон с границей
-
-# кнопка
-style.configure("TButton", background="#C8A2C8", foreground="#FFF", font=("Arial", 12))  # Сиреневый фон, белый текст
-
-login_window = tk.Tk()
-login_window.title("Авторизация")
-
-username_label = tk.Label(login_window, text="Логин:")
-username_label.grid(row=0, column=0, padx=5, pady=5)
-
-username_entry = tk.Entry(login_window)
-username_entry.grid(row=0, column=1, padx=5, pady=5)
-
-password_label = tk.Label(login_window, text="Пароль:")
-password_label.grid(row=1, column=0, padx=5, pady=5)
-
-password_entry = tk.Entry(login_window, show="*")
-password_entry.grid(row=1, column=1, padx=5, pady=5)
-
-login_button = tk.Button(login_window, text="Войти", command=login)
-login_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+import sys
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout,
+    QLineEdit, QPushButton, QLabel, QMessageBox, QFileDialog
+)
+from PyQt6.QtGui import QPixmap, QDragEnterEvent, QDropEvent, QImageReader
+from PyQt6.QtCore import Qt
 
 
-login_window.mainloop()
+class ProfileScreen(QWidget):
+    def __init__(self, username):
+        super().__init__()
+        self.setWindowTitle("Р›РёС‡РЅС‹Р№ РїСЂРѕС„РёР»СЊ")
+        self.setGeometry(100, 100, 300, 300)
+
+        self.layout = QVBoxLayout()
+
+        self.welcome_label = QLabel(f"Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ, {username}!")
+        self.layout.addWidget(self.welcome_label)
+
+        self.photo_label = QLabel("Р¤РѕС‚РѕРіСЂР°С„РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ:")
+        self.layout.addWidget(self.photo_label)
+
+        self.photo_display = QLabel(self)
+        self.photo_display.setFixedSize(100, 100)  # РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹Р№ СЂР°Р·РјРµСЂ РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ С„РѕС‚Рѕ
+        self.photo_display.setStyleSheet("border: 1px solid black;")  # Р”РѕР±Р°РІР»СЏРµРј СЂР°РјРєСѓ РґР»СЏ QLabel
+        self.photo_display.setAcceptDrops(True)  # Р Р°Р·СЂРµС€Р°РµРј РїРµСЂРµС‚Р°СЃРєРёРІР°РЅРёРµ
+        self.layout.addWidget(self.photo_display)
+
+        self.upload_button = QPushButton("Р—Р°РіСЂСѓР·РёС‚СЊ С„РѕС‚РѕРіСЂР°С„РёСЋ", self)
+        self.upload_button.clicked.connect(self.upload_photo)
+        self.layout.addWidget(self.upload_button)
+
+        self.logout_button = QPushButton("Р’С‹Р№С‚Рё", self)
+        self.logout_button.clicked.connect(self.logout)
+        self.layout.addWidget(self.logout_button)
+
+        self.setLayout(self.layout)
+
+            # РЈСЃС‚Р°РЅРѕРІРєР° СЃС‚РёР»РµР№
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #ADD8E6;  /* РЎРІРµС‚Р»Рѕ-РіРѕР»СѓР±РѕР№ С„РѕРЅ */
+            }
+            QPushButton {
+                background-color: #00BFFF;  /* Р“РѕР»СѓР±РѕР№ С†РІРµС‚ РєРЅРѕРїРѕРє */
+                color: white;  /* Р¦РІРµС‚ С‚РµРєСЃС‚Р° РєРЅРѕРїРѕРє */
+                border: none;  /* РЈР±РёСЂР°РµРј СЂР°РјРєСѓ */
+                padding: 10px;  /* РћС‚СЃС‚СѓРїС‹ */
+                border-radius: 5px;  /* Р—Р°РєСЂСѓРіР»РµРЅРЅС‹Рµ СѓРіР»С‹ */
+            }
+            QPushButton:hover {
+                background-color: #1E90FF;  /* Р¦РІРµС‚ РєРЅРѕРїРєРё РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+            }
+        """)
+
+    def set_default_photo(self):
+        # Р—Р°РіСЂСѓР¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+        pixmap = QPixmap("Users\РџРѕР»РёРЅР°\Pictures\admin_photo.png")
+        self.photo_label.setPixmap(pixmap)
+        self.photo_label.setScaledContents(True)
+        # РњР°СЃС€С‚Р°Р±РёСЂСѓРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ, С‡С‚РѕР±С‹ РѕРЅРѕ РІРїРёСЃС‹РІР°Р»РѕСЃСЊ РІ QLabel
+        self.photo_label.setFixedSize(100, 100)
+        # РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С„РёРєСЃРёСЂРѕРІР°РЅРЅС‹Р№ СЂР°Р·РјРµСЂ РґР»СЏ QLabel
+
+    def upload_photo(self):
+        # РћС‚РєСЂС‹РІР°РµРј РґРёР°Р»РѕРі РІС‹Р±РѕСЂР° С„Р°Р№Р»Р° options = QFileDialog.Option()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Р’С‹Р±РµСЂРёС‚Рµ С„РѕС‚РѕРіСЂР°С„РёСЋ", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif);;All Files (*)", options=options)
+        if file_name:
+            self.set_photo(file_name)
+
+    def set_photo(self, file_name):
+        pixmap = QPixmap(file_name)  # Р—Р°РіСЂСѓР¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
+        pixmap = pixmap.scaled(self.photo_display.size(), aspectRatioMode=True)  # РњР°СЃС€С‚Р°Р±РёСЂСѓРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
+        self.photo_display.setPixmap(pixmap)  # РћС‚РѕР±СЂР°Р¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ РІ QLabel
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasImage():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event: QDropEvent):
+        if event.mimeData().hasImage():
+            # РџРѕР»СѓС‡Р°РµРј РїСѓС‚СЊ Рє РёР·РѕР±СЂР°Р¶РµРЅРёСЋ
+            file_name = event.mimeData().urls()[0].toLocalFile()
+            self.set_photo(file_name)
+
+    def logout(self):
+        self.login_screen = LoginScreen()
+        self.login_screen.show()
+        self.close()
+
+
+
+class RegistrationScreen(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Р РµРіРёСЃС‚СЂР°С†РёСЏ")
+        self.setGeometry(100, 100, 300, 200)
+
+        self.layout = QVBoxLayout()
+
+        self.username_input = QLineEdit(self)
+        self.username_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ")
+        self.password_input = QLineEdit(self)
+        self.password_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ")
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.confirm_password_input = QLineEdit(self)
+        self.confirm_password_input.setPlaceholderText("РџРѕРґС‚РІРµСЂРґРёС‚Рµ РїР°СЂРѕР»СЊ")
+        self.confirm_password_input.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.register_button = QPushButton("Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ", self)
+        self.register_button.clicked.connect(self.register)
+
+        self.layout.addWidget(self.username_input)
+        self.layout.addWidget(self.password_input)
+        self.layout.addWidget(self.confirm_password_input)
+        self.layout.addWidget(self.register_button)
+
+        self.setLayout(self.layout)
+
+            # РЈСЃС‚Р°РЅРѕРІРєР° СЃС‚РёР»РµР№
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #FFB6C1;  /* РЎРІРµС‚Р»Рѕ-СЂРѕР·РѕРІС‹Р№ С„РѕРЅ */
+            }
+            QPushButton {
+                background-color: #FF69B4;  /* РўРµРјРЅРѕ-СЂРѕР·РѕРІС‹Р№ С†РІРµС‚ РєРЅРѕРїРѕРє */
+                color: white;  /* Р¦РІРµС‚ С‚РµРєСЃС‚Р° РєРЅРѕРїРѕРє */
+                border: none;  /* РЈР±РёСЂР°РµРј СЂР°РјРєСѓ */
+                padding: 10px;  /* РћС‚СЃС‚СѓРїС‹ */
+                border-radius: 5px;  /* Р—Р°РєСЂСѓРіР»РµРЅРЅС‹Рµ СѓРіР»С‹ */
+            }
+            QPushButton:hover {
+                background-color: #FF1493;  /* Р¦РІРµС‚ РєРЅРѕРїРєРё РїСЂРё РЅР°РІРµРґРµРЅРёРё */
+            }
+        """)
+
+    def register(self):
+        username = self.username_input.text()
+        password = self.password_input.text()
+        confirm_password = self.confirm_password_input.text()
+
+        if password == confirm_password:
+            # Р’ СЂРµР°Р»СЊРЅРѕРј РїСЂРёР»РѕР¶РµРЅРёРё Р·РґРµСЃСЊ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р»РѕРіРёРєР° РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+            QMessageBox.information(self, "РЈСЃРїРµС…", "Р’С‹ СѓСЃРїРµС€РЅРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹!")
+            self.open_profile(username)
+        else:
+            QMessageBox.warning(self, "РћС€РёР±РєР°", "РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚.")
+
+    def open_profile(self, username):
+        self.profile_screen = ProfileScreen(username)
+        self.profile_screen.show()
+        self.close()
+
+
+
+class LoginScreen(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Р’С…РѕРґ")
+        self.setGeometry(100, 100, 300, 200)
+
+        self.layout = QVBoxLayout()
+
+        self.username_input = QLineEdit(self)
+        self.username_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ")
+        self.password_input = QLineEdit(self)
+        self.password_input.setPlaceholderText("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ")
+        self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
+
+        self.login_button = QPushButton("Р’РѕР№С‚Рё", self)
+        self.login_button.clicked.connect(self.login)
+
+        self.register_button = QPushButton("Р РµРіРёСЃС‚СЂР°С†РёСЏ", self)
+        self.register_button.clicked.connect(self.open_registration)
+
+        self.layout.addWidget(self.username_input)
+        self.layout.addWidget(self.password_input)
+        self.layout.addWidget(self.login_button)
+        self.layout.addWidget(self.register_button)
+
+        self.setLayout(self.layout)
+
+
+    def login(self):
+        username = self.username_input.text()
+        password = self.password_input.text()
+
+        if (username == "user" and password == "password") or (username == "administrator" and password == "pass"):
+            self.open_profile(username)
+        else:
+            QMessageBox.warning(self, "РћС€РёР±РєР°", "РќРµРІРµСЂРЅРѕРµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё РїР°СЂРѕР»СЊ.")
+
+    def open_profile(self, username):
+        self.profile_screen = ProfileScreen(username)
+        self.profile_screen.show()
+        self.close()
+
+    def open_registration(self):
+        self.registration_screen = RegistrationScreen()
+        self.registration_screen.show()
+        self.close()
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    login_screen = LoginScreen()
+    login_screen.show()
+    sys.exit(app.exec())
