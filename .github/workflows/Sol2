@@ -1,30 +1,61 @@
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QListWidget, QLabel
+import sys
 
-def add_food():
-  food_name = food_entry.get()
-  food_list.insert(tk.END, food_name)
-  food_entry.delete(0, tk.END)
+class RecipeApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Рецепты")
+        self.setGeometry(100, 100, 400, 300)
 
-food_window = tk.Tk()
-food_window.title("Еда")
+        self.layout = QVBoxLayout()
 
-food_label = tk.Label(food_window, text="Введите название еды:")
-food_label.pack(pady=10)
+        # Список блюд
+        self.dish_list = QListWidget(self)
+        self.dish_list.addItems(["Паста", "Пицца", "Салат", "Борщ", "Омлет"])
+        self.dish_list.itemClicked.connect(self.show_ingredients)
 
-food_entry = tk.Entry(food_window)
-food_entry.pack()
+        # Метка для отображения ингредиентов
+        self.ingredient_label = QLabel("Выберите блюдо, чтобы увидеть ингредиенты", self)
 
-add_button = tk.Button(food_window, text="Добавить", command=add_food)
-add_button.pack(pady=10)
+        self.layout.addWidget(self.dish_list)
+        self.layout.addWidget(self.ingredient_label)
 
-food_list = tk.Listbox(food_window)
-food_list.pack()
+        self.setLayout(self.layout)
 
-style = ttk.Style()
+        # Установка стилей
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #FFFACD;  /* Светло-желтый фон */
+            }
+            QListWidget {
+                background-color: #FFD700;  /* Золотистый цвет для списка */
+                color: black;  /* Цвет текста списка */
+                border: none;  /* Убираем рамку */
+                padding: 10px;  /* Отступы */
+            }
+            QLabel {
+                font-size: 16px;  /* Размер шрифта для меток */
+                padding: 10px;  /* Отступы */
+                color: #8B4513;  /* Темно-коричневый цвет текста меток */
+            }
+        """)
 
-style.configure("TFrame", background="#F8E0E6")  # Бледно-розовый
-style.configure("TLabel", background="#F8E0E6", foreground="#333333")
-style.configure("TEntry", background="#FFF", foreground="#333333", borderwidth=2, relief="solid")
-style.configure("TButton", background="#C8A2C8", foreground="#FFF", font=("Arial", 12))
+        # Словарь с ингредиентами
+        self.ingredients = {
+            "Паста": "Макароны, соус, сыр, специи",
+            "Пицца": "Тесто, томатный соус, сыр, колбаса, овощи",
+            "Салат": "Листья салата, помидоры, огурцы, заправка",
+            "Борщ": "Свекла, капуста, картошка, мясо, специи",
+            "Омлет": "Яйца, молоко, соль, перец"
+        }
 
+    def show_ingredients(self, item):
+        dish = item.text()
+        ingredients = self.ingredients.get(dish, "Ингредиенты не найдены.")
+        self.ingredient_label.setText(f"Ингредиенты для {dish}: {ingredients}")
 
-food_window.mainloop()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    recipe_app = RecipeApp()
+    recipe_app.show()
+    sys.exit(app.exec())
